@@ -1,4 +1,5 @@
-import React, {useState} from "react";
+import React, {useState, useCallback} from "react";
+import {auth, db} from '../firebase';
 
 const Login = () => {
     //Constantes del formulario
@@ -25,7 +26,33 @@ const Login = () => {
         }
 
         setError(null)
+
+        //Comparativa para proceso registro o login
+        if(esRegistro){
+            //Crear una funcion para registrar
+            registrar()
+        }
     }
+
+    //Incorporar un hook useCallBack
+    const registrar = useCallback(async() => {
+            try {
+                const res = await auth.createUserWithEmailAndPassword(email, pass) 
+                console.log("Resultado del registro", res);
+
+            } catch (error) {
+                console.log(error);
+                if(error.code === 'auth/invalid-email'){
+                    setError('La dirección de correo electrónico está mal formateada')
+                }
+
+                if(error.code === 'auth/email-already-in-use'){
+                    setError('La dirección de correo electrónico ya está siendo utilizada por otra cuenta.')
+                }
+            }
+        },
+        [email, pass]
+    )
 
     return (
         <div className="mt-5">
