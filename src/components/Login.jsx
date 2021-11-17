@@ -1,7 +1,9 @@
 import React, {useState, useCallback} from "react";
-import {auth, db} from '../firebase';
+import {auth} from '../firebase';
+//Nota para que funciones agregamos un props al componente principal y envolvemos el componete dentro del withRouter
+import { withRouter } from "react-router-dom";
 
-const Login = () => {
+const Login = (props) => {
     //Constantes del formulario
     const [email, setEmail] = useState('')
     const [pass, setPass] = useState('')
@@ -32,6 +34,9 @@ const Login = () => {
             //Crear una funcion para registrar
             registrar()
         }
+        else{
+            login1()
+        }
     }
 
     //Incorporar un hook useCallBack
@@ -39,6 +44,12 @@ const Login = () => {
             try {
                 const res = await auth.createUserWithEmailAndPassword(email, pass) 
                 console.log("Resultado del registro", res);
+
+                setEmail('')
+                setPass('')
+                setError(null)
+
+                props.history.push('/admin')
 
             } catch (error) {
                 console.log(error);
@@ -52,6 +63,30 @@ const Login = () => {
             }
         },
         [email, pass]
+    )
+
+    const login1 = useCallback(async() => {
+            try {
+                const res = await auth.signInWithEmailAndPassword(email, pass)
+                console.log("Resltado login", res.user)
+
+                setEmail('')
+                setPass('')
+                setError(null)
+                props.history.push('/admin')
+
+            } catch (error) {
+                console.log(error)
+                if(error.code === 'auth/user-not-found'){
+                    setError('No hay ningún registro de usuario que corresponda a este identificador. Es posible que se haya eliminado al usuario.')
+                }
+
+                if(error.code === 'auth/wrong-password'){
+                    setError('La contraseña no es válida o el usuario no tiene contraseña.')
+                }
+            }
+        },
+        [email, pass] //Nota el useCallback Requiere que los parametros usados se agregen en los corchetes finales
     )
 
     return (
@@ -107,4 +142,4 @@ const Login = () => {
     )
 }
 
-export default Login
+export default withRouter (Login)
