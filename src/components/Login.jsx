@@ -1,5 +1,5 @@
 import React, {useState, useCallback} from "react";
-import {auth} from '../firebase';
+import {auth, db} from '../firebase';
 //Nota para que funciones agregamos un props al componente principal y envolvemos el componete dentro del withRouter
 import { withRouter } from "react-router-dom";
 
@@ -44,6 +44,12 @@ const Login = (props) => {
             try {
                 const res = await auth.createUserWithEmailAndPassword(email, pass) 
                 console.log("Resultado del registro", res);
+
+                //Crear una coleccion adicional a los usuarios para tener contro de sus datos
+                await db.collection(res.user.uid).add({
+                    name: 'Bienvenido',
+                    fecha: Date.now()
+                })
 
                 setEmail('')
                 setPass('')
