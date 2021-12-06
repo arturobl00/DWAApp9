@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import {auth} from '../firebase'
 import { withRouter } from 'react-router-dom'
-import Borrar from './Borrar'
+import CRUD from './Crud'
 
 function Admin(props) {
     const [user, setUser] = useState(null)
@@ -23,7 +23,7 @@ function Admin(props) {
             <h1>Pagina de administracion</h1>
             {
                 user && (
-                    <Borrar user={user}/>
+                    <CRUD user={user}/>
                 )
             }
         </div>

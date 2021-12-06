@@ -1,9 +1,7 @@
-import React, {useState} from 'react';
-import './App.css';
+import React, {useState} from "react";
 import {db} from '../firebase'
 
-
-const Crud = (props) => {
+const CRUD = (props) => {
   //Constante para mostrar en el html las tareas
   const [tareas, setTareas] = useState([])
   //Constante para agregar la tarea
@@ -21,7 +19,7 @@ const Crud = (props) => {
     //Funcion asyc para obterner datos
     const obtenerDatos = async () => {
       try {
-        const data = await db.collection(props.user.id).get()
+        const data = await db.collection(props.user.uid).get()
         console.log(data.docs)
         const arrayData = await data.docs.map(doc => ({ id: doc.id, ...doc.data()}))
         console.log(arrayData)
@@ -55,7 +53,7 @@ const Crud = (props) => {
       }
 
       //Codigo para agregar la tarea en firebase codigo de plataforma
-      const data = await db.collection(props.user.id).add(nuevaTarea)
+      const data = await db.collection(props.user.uid).add(nuevaTarea)
 
       //Con esto actualizo la lista sin dar refres prueba antes de poner
       setTareas([
@@ -78,7 +76,7 @@ const Crud = (props) => {
   const eliminar = async (id) => {
     try {
       console.log(id)
-      await db.collection(props.user.id).doc(id).delete()
+      await db.collection(props.user.uid).doc(id).delete()
 
       const arrayFiltrado = tareas.filter(item => item.id !== id)
       
@@ -119,7 +117,7 @@ const Crud = (props) => {
         fecha: fecha
       }
 
-      await db.collection(props.user.id).doc(id).update(editarTarea)
+      await db.collection(props.user.uid).doc(id).update(editarTarea)
 
       //Actulizar en pantalla sin refescar
       const arrayEditado = tareas.map(item => (
@@ -153,7 +151,7 @@ const Crud = (props) => {
                   <li className="list-group-item" key={item.id}>
                   <span>{item.name}</span>
                   <br/>
-                  <span>{item.date}</span>
+                  <span>{item.fecha}</span>
                     <button 
                     className="btn btn-danger btn-sm float-right"
                     onClick={() => eliminar(item.id)}>
@@ -207,4 +205,4 @@ const Crud = (props) => {
   );
 }
 
-export default Crud;
+export default CRUD
